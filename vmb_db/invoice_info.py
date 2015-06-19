@@ -106,13 +106,47 @@ def get_invoice_list_by_casillero(casillero=None, sort=None, limit=None, skip=No
         db.close()
         return []
 
+def set_inv_by_guia(guia, paid, amt, casillero=None):
 
-if __name__ == '__main__':
-    page = 1
-    CLIENTS_PER_PAGE = 50
-    # all = get_contact_list(where=None, sort=None, limit=50, skip=(page - 1) * CLIENTS_PER_PAGE)
-    # for i in all:
-    #     print i
-    inv = get_invoice_list_by_casillero(casillero=361053)
-    for i in inv:
-        print i
+    if guia is None:
+        raise Exception('guia is None')
+    else:
+        if not isinstance( guia, int ):
+            guia = int(guia)
+
+    if amt is None:
+        raise Exception('amt is None')
+    else:
+        if not isinstance( amt, float ):
+            amt = float(amt)
+
+
+    args = [123, guia, paid, amt, 0]
+
+
+    try:
+        db = get_db(None)
+        cur = db.cursor()
+        results = cur.callproc('update_inv_paid', args)
+        print results[0]
+
+        cur.close()
+        db.close()
+
+        return results[0]
+    except Exception,e:
+        db.rollback()
+        errorMes = str(e)
+        print errorMes
+        db = get_db()
+        cur = db.cursor()
+        query = "INSERT INTO VMB.error_messages(\
+            file_name, function, message) " \
+            "VALUES(%s,%s,%s)"
+        args = ('invoice_info', 'set_inv_by_guia', errorMes[:100])
+        cur.execute(query, args)
+        db.commit()
+
+        cur.close()
+        db.close()
+        return 0

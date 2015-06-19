@@ -131,11 +131,69 @@ def cleaned_contact(contact):
 
     contact['casillero'] = 'PTY%s' % contact['casillero']
 
-    contact['contacto_nombre_1'] = contact['contacto_apellido_1'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
-    contact['contacto_nombre_2'] = contact['contacto_apellido_1'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+    contact['contacto_nombre_1'] = contact['contacto_nombre_1'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+    contact['contacto_nombre_2'] = contact['contacto_nombre_2'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
     # contact['contacto_apellido_1'] = contact['contacto_apellido_1'].replace("\xf1", chr(241)).replace("\xf3", chr(243)).replace("\xed", chr(237))
     contact['contacto_apellido_1'] = contact['contacto_apellido_1'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
-    contact['contacto_apellido_2'] = contact['contacto_apellido_1'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+    contact['contacto_apellido_2'] = contact['contacto_apellido_2'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+
+    contact['direccion_calle'] = contact['direccion_calle'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+    contact['direccion_torre'] = contact['direccion_torre'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+    contact['direccion_apt'] = contact['direccion_apt'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
+    contact['direccion_area'] = contact['direccion_area'].replace("\xf1", 'n').replace("\xf3", 'o').replace("\xed", 'i')
     return contact
+
+
+def set_contact_by_casillero(newClient, casillero=None):
+
+    if casillero is None:
+        raise Exception('casillero is None')
+    else:
+        if not isinstance( casillero, int ):
+            casillero = casillero.replace("PTY", "").replace("-", "").replace(" ", "")
+            casillero = int(casillero)
+
+    
+    args2 = [casillero, newClient['contacto_nombre_1'], newClient['contacto_nombre_2'],
+            newClient['contacto_apellido_1'], newClient['contacto_apellido_2'],
+            newClient['telefonofij'], newClient['telefonocel'], newClient['correo'],
+            newClient['direccion_calle'], newClient['direccion_torre'],
+            newClient['direccion_apt'], newClient['direccion_area'], newClient['tarifa'],
+            0]
+
+    
+
+    try:
+        db = get_db(None)
+        cur = db.cursor()
+
+        # query = update % (args)
+        # print query
+        # cur.execute(update, args)
+        # db.commit()
+        # affected_rows = db.affected_rows()
+        # print affected_rows
+        results = cur.callproc('update_cont_by_cas', args2)
+
+        cur.close()
+        db.close()
+
+        return results[0]
+    except Exception,e:
+        db.rollback()
+        errorMes = str(e)
+        print errorMes
+        db = get_db()
+        cur = db.cursor()
+        query = "INSERT INTO VMB.error_messages(\
+            file_name, function, message) " \
+            "VALUES(%s,%s,%s)"
+        args = ('contact_info', 'set_contact_by_casillero', errorMes[:100])
+        cur.execute(query, args)
+        db.commit()
+
+        cur.close()
+        db.close()
+        return 0
 
 
