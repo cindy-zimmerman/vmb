@@ -3,50 +3,55 @@ import csv
 import math
 from invoices import insert_invoices
 
+ACCEPTED_FIELDNAMES = ['N.', 'Fecha', 'Serv', 'Guia', 'Referencia', 'Remitente',
+                       'Destinatario', 'Des', 'Peso', 'Piezas', 'Estatus', 'Observacion',
+                       'Receptor', 'Fecha_proceso', 'Hora_proceso']
+
 def accounts(fileFullName=None):
 
     with open(fileFullName) as csvfile:
         reader = csv.DictReader(csvfile)
-        for row in reader:
-            # print row
-            # guia = row['Guia']
-            if row['Guia']:
+        count = 0
+        # if reader.fieldnames in ACCEPTED_FIELDNAMES:
+        # if ACCEPTED_FIELDNAMES in reader.fieldnames:
+        if len(set(ACCEPTED_FIELDNAMES).intersection(reader.fieldnames)) == len(ACCEPTED_FIELDNAMES):
 
-                fecha = row['Fecha']
-                serv = row['Serv']
-                guia = int(row['Guia'])
-                referencia = row['Referencia'].replace('\xc2\xa0', ' ')
-                remitente = row['Remitente'].replace('\xc2\xa0', ' ')
+            for row in reader:
+                if row['Guia']:
 
-                casillero = int(row['Destinatario'].replace("PTY", "").replace('\xc2\xa0', ' '))
-                # print casillero
+                    fecha = row['Fecha']
+                    serv = row['Serv']
+                    guia = int(row['Guia'])
+                    referencia = row['Referencia'].replace('\xc2\xa0', ' ')
+                    remitente = row['Remitente'].replace('\xc2\xa0', ' ')
 
-                des = row['Des'].replace('\xc2\xa0', ' ')
+                    casillero = int(row['Destinatario'].replace("PTY", "").replace('\xc2\xa0', ' '))
 
-                peso = float(row['Peso'])
-                lb = int(math.ceil((peso * 2.205)))
-                subtotal = lb * 4
-                piezas = int(row['Piezas'].replace('\xc2\xa0', ' '))
+                    des = row['Des'].replace('\xc2\xa0', ' ')
 
-                status = row['Estatus'].replace('\xc2\xa0', ' ').split()
-                if status[0] == 'ENTREGADO':
-                    in_panama = 1
-                else:
-                    in_panama = 0
+                    peso = float(row['Peso'])
+                    lb = int(math.ceil((peso * 2.205)))
+                    subtotal = lb * 4
+                    piezas = int(row['Piezas'].replace('\xc2\xa0', ' '))
 
-                receptor = row['Receptor'].replace('\xc2\xa0', ' ')
+                    status = row['Estatus'].replace('\xc2\xa0', ' ').split()
+                    if status[0] == 'ENTREGADO':
+                        in_panama = 1
+                    else:
+                        in_panama = 0
 
-
-                fecha_proceso = row['Fecha proceso']
-                hora_proceso = row['Hora proceso'] #TODO change the end
-
-                paid = amt_paid = 0
-
-                insert_invoices(serv,guia, referencia, remitente, casillero, des, peso, lb, piezas, in_panama,
-                   receptor, fecha, fecha_proceso, hora_proceso, subtotal, paid, amt_paid)
+                    receptor = row['Receptor'].replace('\xc2\xa0', ' ')
 
 
+                    fecha_proceso = row['Fecha_proceso']
+                    hora_proceso = row['Hora_proceso'] #TODO change the end
 
+                    paid = amt_paid = 0
 
-if __name__ == "__main__":
-    accounts(fileFullName='VMB/zoom1.csv')
+                    insert_invoices(serv,guia, referencia, remitente, casillero, des, peso, lb, piezas, in_panama,
+                       receptor, fecha, fecha_proceso, hora_proceso, subtotal, paid, amt_paid)
+                    count += 1
+            else:
+                return count
+
+            return count

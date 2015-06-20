@@ -20,10 +20,6 @@ def get_db(db=None):
             cursor.execute("SELECT VERSION()")
             results = cursor.fetchone()
             ver = results[0]
-            if (ver is None):
-                print "false"
-            else:
-                print 'True'
         except:
             print "ERROR IN CONNECTION"
             return False

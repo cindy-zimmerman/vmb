@@ -1,7 +1,7 @@
 __author__ = 'cz'
 
 from vmb_db.conn import get_db, iterate_query, get_one
-INVOICES_PER_PAGE = 50
+INVOICES_PER_PAGE = 100
 
 select = "SELECT " \
             "INVOICES_id,"\
@@ -87,7 +87,6 @@ def get_invoice_list_by_casillero(casillero=None, sort=None, limit=None, skip=No
 
     try:
         query = '%s%s%s' % (select, where, sort)
-        print query
         # https://gist.github.com/robcowie/814599?
         return iterate_query(query=query, connection=None, arraysize=100)
     except Exception,e:
