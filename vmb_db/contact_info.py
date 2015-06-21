@@ -115,7 +115,7 @@ def cleaned_contact(contact):
     return contact
 
 
-def set_contact_by_casillero(newClient, casillero=None):
+def set_contact_by_casillero(newClient, casillero=None, updatedUser=None):
 
     if casillero is None:
         raise Exception('casillero is None')
@@ -124,15 +124,12 @@ def set_contact_by_casillero(newClient, casillero=None):
             casillero = casillero.replace("PTY", "").replace("-", "").replace(" ", "")
             casillero = int(casillero)
 
-
     args2 = [casillero, newClient['contacto_nombre_1'], newClient['contacto_nombre_2'],
             newClient['contacto_apellido_1'], newClient['contacto_apellido_2'],
             newClient['telefonofij'], newClient['telefonocel'], newClient['correo'],
             newClient['direccion_calle'], newClient['direccion_torre'],
             newClient['direccion_apt'], newClient['direccion_area'], newClient['tarifa'],
-            0]
-
-    
+            updatedUser, 0]
 
     try:
         db = get_db(None)
