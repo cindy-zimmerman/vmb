@@ -4,7 +4,7 @@ from conn import get_db
 
 def insert_account(contacto_nombre_1, contacto_nombre_2, contacto_apellido_1,
             contacto_apellido_2, telefonofij, telefonocel, correo, direccion_calle,
-            direccion_torre, direccion_apt, direccion_area, ciudad, casillero=None):
+            direccion_torre, direccion_apt, direccion_area, ciudad, tarifa=None, casillero=None):
 
     db = get_db(None)
     cur = db.cursor()
@@ -31,11 +31,11 @@ def insert_account(contacto_nombre_1, contacto_nombre_2, contacto_apellido_1,
         query = "INSERT INTO VMB.VMB_ACCOUNTS(\
                 casillero, contacto_nombre_1, contacto_nombre_2, contacto_apellido_1, \
                 contacto_apellido_2, telefonofij, telefonocel, correo, direccion_calle, \
-                direccion_torre, direccion_apt, direccion_area, ciudad) " \
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                direccion_torre, direccion_apt, direccion_area, ciudad, tarifa) " \
+                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         args = (casillero, contacto_nombre_1, contacto_nombre_2, contacto_apellido_1,
                 contacto_apellido_2, telefonofij, telefonocel, correo, direccion_calle,
-                direccion_torre, direccion_apt, direccion_area, ciudad)
+                direccion_torre, direccion_apt, direccion_area, ciudad, tarifa)
 
         # db_config = read_db_config()
         # conn = MySQLConnection(**db_config)
