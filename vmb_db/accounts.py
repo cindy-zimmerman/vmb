@@ -1,5 +1,5 @@
 __author__ = 'cz'
-from conn import get_db
+from conn import get_db, error_mess
 
 
 def insert_account(contacto_nombre_1, contacto_nombre_2, contacto_apellido_1,
@@ -52,14 +52,8 @@ def insert_account(contacto_nombre_1, contacto_nombre_2, contacto_apellido_1,
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        # TypeError
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('accounts', 'insert_account', errorMes[:100])
-        cursor = db.cursor()
-        cursor.execute(query, args)
-        db.commit()
+
+        error_mess(pythonFile='accounts', function='insert_account', errorMess=errorMes[:100])
     finally:
         cur.close()
         cursor.close()

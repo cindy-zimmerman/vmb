@@ -1,5 +1,5 @@
 __author__ = 'cz'
-from vmb_db.conn import get_db, iterate_query, get_one
+from vmb_db.conn import get_db, iterate_query, get_one, error_mess
 
 CLIENTS_PER_PAGE = 50
 iter_pages = 100
@@ -53,17 +53,7 @@ def get_contact_list(where=None, sort=None, limit=None, skip=None):
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('contact_info', 'get_contact_list', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
-
-        cur.close()
-        db.close()
+        error_mess(pythonFile='contact_info', function='get_contact_list', errorMess=errorMes[:100])
         return []
 
 
@@ -83,17 +73,8 @@ def get_contact(where=None):
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('contact_info', 'get_contact', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
 
-        cur.close()
-        db.close()
+        error_mess(pythonFile='contact_info', function='get_contact', errorMess=errorMes[:100])
         return None
 
 def get_contact_by_casillero(casillero=None):
@@ -114,17 +95,7 @@ def get_contact_by_casillero(casillero=None):
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('contact_info', 'get_contact', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
-
-        cur.close()
-        db.close()
+        error_mess(pythonFile='contact_info', function='get_contact_by_casillero', errorMess=errorMes[:100])
         return None
 
 def cleaned_contact(contact):
@@ -153,7 +124,7 @@ def set_contact_by_casillero(newClient, casillero=None):
             casillero = casillero.replace("PTY", "").replace("-", "").replace(" ", "")
             casillero = int(casillero)
 
-    
+
     args2 = [casillero, newClient['contacto_nombre_1'], newClient['contacto_nombre_2'],
             newClient['contacto_apellido_1'], newClient['contacto_apellido_2'],
             newClient['telefonofij'], newClient['telefonocel'], newClient['correo'],
@@ -167,12 +138,6 @@ def set_contact_by_casillero(newClient, casillero=None):
         db = get_db(None)
         cur = db.cursor()
 
-        # query = update % (args)
-        # print query
-        # cur.execute(update, args)
-        # db.commit()
-        # affected_rows = db.affected_rows()
-        # print affected_rows
         results = cur.callproc('update_cont_by_cas', args2)
 
         cur.close()
@@ -184,13 +149,7 @@ def set_contact_by_casillero(newClient, casillero=None):
         errorMes = str(e)
         print errorMes
         db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('contact_info', 'set_contact_by_casillero', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
+        error_mess(pythonFile='contact_info', function='set_contact_by_casillero', errorMess=errorMes[:100])
 
         cur.close()
         db.close()

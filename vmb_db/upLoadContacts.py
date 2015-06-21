@@ -8,7 +8,7 @@ def accounts(fileFullName=None):
     with open(fileFullName, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            print(row['Casillero'], row['Contacto'])
+            print(row['Casillero'], row['Contacto'], row['Tarifa'])
             if row['Casillero'] != 'PTY-361011':
                 Casillero = row['Casillero'].replace("PTY", "")
                 Casillero = Casillero.replace("-", "")
@@ -41,11 +41,14 @@ def accounts(fileFullName=None):
                 Telefonofij = Telefonofij.replace("'", "")
                 Telefonofij = Telefonofij.replace(" ", "")
                 Telefonofij = Telefonofij.replace("\xc2\xa0", "")
-                print Telefonofij
+                if Telefonofij[:3] not in ('507', '506'):
+                    Telefonofij = '507%s' % (Telefonofij)
                 telefonofij = int(Telefonofij)
 
                 Telefonocel = row['Telefonocel'].replace("-", "")
-                Telefonocel = Telefonofij.replace(" ", "")
+                Telefonocel = Telefonocel.replace(" ", "")
+                if Telefonocel[:3] not in ('507', '506'):
+                    Telefonocel = '507%s' % (Telefonocel)
                 telefonocel = int(Telefonocel)
 
                 correo = row['Correo']
@@ -56,9 +59,11 @@ def accounts(fileFullName=None):
                 direccion_apt = ''
                 direccion_area = ''
 
+                tarifa = row['Tarifa']
+
                 insert_account(contacto_nombre_1, contacto_nombre_2, contacto_apellido_1,
                                 contacto_apellido_2, telefonofij, telefonocel, correo, direccion_calle,
-                                direccion_torre, direccion_apt, direccion_area, ciudad, casillero)
+                                direccion_torre, direccion_apt, direccion_area, ciudad, tarifa, casillero)
 
 if __name__ == "__main__":
     accounts(fileFullName='VMB/currentContacts.csv')

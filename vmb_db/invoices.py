@@ -1,5 +1,5 @@
 __author__ = 'cz'
-from conn import get_db
+from conn import get_db, error_mess
 import time, datetime
 
 
@@ -59,10 +59,10 @@ def insert_invoices(serv, guia, referencia, remitente, casillero, des, peso, lb,
         if invoice:
             INVOICES_id = int(invoice[0])
             query = "UPDATE VMB.INVOICES \
-                     SET in_panama=%s, receptor=%s, \
+                     SET receptor=%s, \
                      fecha=%s, fecha_proceso=%s, hora_proceso=%s \
                      WHERE INVOICES_id=%s"
-            args = (in_panama, receptor, fecha_str, fecha_proceso_str, hora_proceso_str, INVOICES_id)
+            args = (receptor, fecha_str, fecha_proceso_str, hora_proceso_str, INVOICES_id)
         else:
             query = "INSERT INTO VMB.INVOICES(\
                     serv, guia, referencia, remitente, casillero, des, peso, lb, piezas, in_panama, \
@@ -84,15 +84,8 @@ def insert_invoices(serv, guia, referencia, remitente, casillero, des, peso, lb,
         errorMes = str(e)
         print errorMes
         # TypeError
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('invoices', 'insert_invoices', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
+        error_mess(pythonFile='invoices', function='insert_invoices', errorMess=errorMes[:100])
     finally:
         cur.close()
         db.close()
 
-if __name__ == "__main__":
-    None

@@ -1,6 +1,6 @@
 __author__ = 'cz'
 
-from vmb_db.conn import get_db, iterate_query, get_one
+from vmb_db.conn import get_db, iterate_query, get_one, error_mess
 INVOICES_PER_PAGE = 100
 
 select = "SELECT " \
@@ -52,17 +52,7 @@ def get_invoice_list(where=None, sort=None, limit=None, skip=None):
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('invoice_info', 'get_invoice_list', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
-
-        cur.close()
-        db.close()
+        error_mess(pythonFile='invoice_info', function='get_invoice_list', errorMess=errorMes[:100])
         return []
 
 
@@ -92,17 +82,7 @@ def get_invoice_list_by_casillero(casillero=None, sort=None, limit=None, skip=No
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('invoice_info', 'get_invoice_list_by_casillero', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
-
-        cur.close()
-        db.close()
+        error_mess(pythonFile='invoice_info', function='get_invoice_list_by_casillero', errorMess=errorMes[:100])
         return []
 
 def set_inv_by_guia(guia, paid, amt, casillero=None):
@@ -137,14 +117,42 @@ def set_inv_by_guia(guia, paid, amt, casillero=None):
         db.rollback()
         errorMes = str(e)
         print errorMes
-        db = get_db()
+
+        error_mess(pythonFile='invoice_info', function='set_inv_by_guia', errorMess=errorMes[:100])
+
+        cur.close()
+        db.close()
+        return 0
+
+
+def set_inv_panama_by_guia(guia):
+
+    if guia is None:
+        raise Exception('guia is None')
+    else:
+        if not isinstance( guia, int ):
+            guia = int(guia)
+
+
+    args = [guia, 0]
+    print 'update %s' % (guia)
+
+
+    try:
+        db = get_db(None)
         cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('invoice_info', 'set_inv_by_guia', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
+        results = cur.callproc('update_inv_panama', args)
+        print results[0]
+
+        cur.close()
+        db.close()
+
+        return results[0]
+    except Exception,e:
+        db.rollback()
+        errorMes = str(e)
+        print errorMes
+        error_mess(pythonFile='invoice_info', function='set_inv_panama_by_guia', errorMess=errorMes[:100])
 
         cur.close()
         db.close()

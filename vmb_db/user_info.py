@@ -1,5 +1,5 @@
 __author__ = 'cz'
-from vmb_db.conn import get_db, get_one
+from vmb_db.conn import get_db, get_one, error_mess
 
 select = 'SELECT USERS_id, '\
                ' user_name, '\
@@ -22,17 +22,7 @@ def get_user_by_name(user_name=None):
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('user_info', 'get_user_by_name', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
-
-        cur.close()
-        db.close()
+        error_mess(pythonFile='user_info', function='get_user_by_name', errorMess=errorMes[:100])
         return None
 
 
@@ -48,16 +38,6 @@ def get_user_by_id(user_id=None):
     except Exception,e:
         errorMes = str(e)
         print errorMes
-        db = get_db()
-        cur = db.cursor()
-        query = "INSERT INTO VMB.error_messages(\
-            file_name, function, message) " \
-            "VALUES(%s,%s,%s)"
-        args = ('user_info', 'get_user_by_id', errorMes[:100])
-        cur.execute(query, args)
-        db.commit()
-
-        cur.close()
-        db.close()
+        error_mess(pythonFile='user_info', function='get_user_by_id', errorMess=errorMes[:100])
         return None
 
