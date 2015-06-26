@@ -10,16 +10,13 @@ def insert_invoices(serv, guia, referencia, remitente, casillero, des, peso, lb,
     cur = db.cursor()
 
     try:
-        now = datetime.datetime(2009,5,5)
-        str_now = now.date().isoformat()
-
         fecha_list = fecha.split("/")
-        fecha_date = datetime.datetime(int(fecha_list[2]), int(fecha_list[0]), int(fecha_list[1]))
+        fecha_date = datetime.datetime((int(fecha_list[2]) + 2000), int(fecha_list[1]), int(fecha_list[0]))
         fecha_str = fecha_date.date().isoformat()
 
         fecha_proceso_list = fecha_proceso.split("/")
-        fecha_proceso_date = datetime.datetime(int(fecha_proceso_list[2]), int(fecha_proceso_list[0]),
-                                               int(fecha_proceso_list[1]))
+        fecha_proceso_date = datetime.datetime((int(fecha_proceso_list[2]) + 2000), int(fecha_proceso_list[1]),
+                                               int(fecha_proceso_list[0]))
         fecha_proceso_str = fecha_proceso_date.date().isoformat()
 
         if hora_proceso[-1] == ':':

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'cz'
 import csv
 import math
@@ -22,20 +23,20 @@ def accounts(fileFullName=None):
                     fecha = row['Fecha']
                     serv = row['Serv']
                     guia = int(row['Guia'])
-                    referencia = row['Referencia'].replace('\xc2\xa0', ' ')
-                    remitente = row['Remitente'].replace('\xc2\xa0', ' ').replace('´', "'")
+                    referencia = row['Referencia'].replace('\xc2\xa0', ' ').replace('\xa0', '')
+                    remitente = row['Remitente'].replace('\xc2\xa0', ' ').replace('´', "'").replace('\xb4', "'").replace('\xa0', '')
 
-                    casillero = int(row['Destinatario'].replace("PTY", "").replace('\xc2\xa0', ' '))
+                    casillero = int(row['Destinatario'].replace("PTY", "").replace('\xc2\xa0', ' ').replace('\xa0', ''))
 
-                    des = row['Des'].replace('\xc2\xa0', ' ')
+                    des = row['Des'].replace('\xc2\xa0', ' ').replace('\xa0', '')
 
                     peso = float(row['Peso'])
                     lb = int(math.ceil((peso * 2.205)))
                     subtotal = lb * 4
-                    piezas = int(row['Piezas'].replace('\xc2\xa0', ' '))
+                    piezas = int(row['Piezas'].replace('\xc2\xa0', ' ').replace('\xa0', ''))
                     in_panama = 0
 
-                    receptor = row['Receptor'].replace('\xc2\xa0', ' ')
+                    receptor = row['Receptor'].replace('\xc2\xa0', ' ').replace('\xa0', '')
 
 
                     fecha_proceso = row['Fecha_proceso']
